@@ -14,6 +14,10 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
+  @Post('getAll')
+  findAll(@CurrentUser() user: IUser) {
+    return this.userService.findAll(user);
+  }
   //nao eh pra ter get
   // @Get()
   // findAll() {
