@@ -39,7 +39,8 @@ export class AuthService {
 
       //arrumar esse try catch
     } catch (e) {
-      throw new Error(e);
+      console.log(e.message);
+      throw new UnauthorizedException('email ou senha incorretos');
     }
   }
 }
