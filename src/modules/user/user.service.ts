@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -9,6 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { IUser } from 'src/interfaces/user';
 
 @Injectable()
 export class UserService {
@@ -43,8 +45,14 @@ export class UserService {
     }
   }
 
-  findAll() {
-    return `This action returns all user`;
+  async findAll(user: IUser) {
+    if (user.user.type !== 'dti') {
+      throw new ForbiddenException('Permission denied');
+    }
+    //parametros podem ser passados ou nao para o find
+    const allUsers = await this.userRepository.find();
+
+    return allUsers;
   }
 
   async findOneById(id: number) {
@@ -65,8 +73,24 @@ export class UserService {
     return user;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: number, updateUserDto: UpdateUserDto, user: IUser) {
+    if (user.user.id !== id) {
+      throw new ForbiddenException('Permission denied');
+    }
+
+    const userData = {
+      name: updateUserDto?.name,
+      password: updateUserDto.password
+        ? await bcrypt.hash(updateUserDto.password, 10)
+        : updateUserDto?.password,
+    };
+
+    const findUser = await this.userRepository.preload({ id, ...userData });
+    if (!findUser) {
+      this.throwNotFoundError();
+    }
+
+    return await this.userRepository.save(findUser);
   }
 
   remove(id: number) {

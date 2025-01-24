@@ -21,7 +21,12 @@ export class AuthService {
 
       if (comparedPassword) {
         const payload = {
-          user: { name: user.name, email: user.email, type: user.type },
+          user: {
+            name: user.name,
+            email: user.email,
+            type: user.type,
+            id: user.id,
+          },
         };
         const token = await this.jwtService.signAsync(payload, {
           secret: process.env.SECRET_KEY,

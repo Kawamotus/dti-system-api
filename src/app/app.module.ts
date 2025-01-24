@@ -1,10 +1,12 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from 'src/modules/user/user.module';
 import { AuthModule } from 'src/modules/auth/auth.module';
+import { JwtService } from '@nestjs/jwt';
+import { TokenValidationMiddleware } from 'src/middlewares/token-validation.middleware';
 
 @Module({
   imports: [
@@ -23,6 +25,16 @@ import { AuthModule } from 'src/modules/auth/auth.module';
     UserModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, JwtService],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(TokenValidationMiddleware)
+      .exclude(
+        { path: '/auth', method: RequestMethod.POST },
+        { path: '/user', method: RequestMethod.POST },
+      )
+      .forRoutes('*');
+  }
+}
