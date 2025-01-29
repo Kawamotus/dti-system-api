@@ -7,6 +7,8 @@ import { UserModule } from 'src/modules/user/user.module';
 import { AuthModule } from 'src/modules/auth/auth.module';
 import { JwtService } from '@nestjs/jwt';
 import { TokenValidationMiddleware } from 'src/middlewares/token-validation.middleware';
+import { TicketModule } from 'src/modules/ticket/ticket.module';
+import { DeviceModule } from 'src/modules/device/device.module';
 
 @Module({
   imports: [
@@ -23,6 +25,8 @@ import { TokenValidationMiddleware } from 'src/middlewares/token-validation.midd
     }),
     AuthModule,
     UserModule,
+    TicketModule,
+    DeviceModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtService],
