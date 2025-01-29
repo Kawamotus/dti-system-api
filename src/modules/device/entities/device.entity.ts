@@ -1,10 +1,12 @@
 import { Ticket } from 'src/modules/ticket/entities/ticket.entity';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinTable,
   ManyToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
@@ -15,17 +17,23 @@ export class Device {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ unique: true })
   serial_number: string;
 
-  @Column()
+  @Column({ unique: true })
   patrimony: string;
 
   @Column()
   location: string;
 
-  @Column()
+  @Column({ default: 'disponivel' })
   status: string; //disponivel, em uso
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   @ManyToMany(() => Ticket, (ticket) => ticket.devices)
   @JoinTable()

@@ -45,6 +45,7 @@ export class UserService {
     }
   }
 
+  //adicionar paginacao nessa budega
   async findAll(user: IUser) {
     if (user.user.type !== 'dti') {
       throw new ForbiddenException('Permission denied');
